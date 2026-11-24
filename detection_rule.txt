@@ -1,0 +1,33 @@
+
+
+title: Web Application Vulnerability Scanning and Path Traversal
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: experimental
+description: Detects usage of known vulnerability scanning tools and path traversal attempts in web server access logs.
+author: Detection Engineer
+date: 2026/07/25
+logsource:
+    category: webserver
+    product: apache
+detection:
+    scanner_ua:
+        useragent|contains:
+            - 'sqlmap'
+            - 'Nikto'
+            - 'masscan'
+    path_traversal:
+        request|contains:
+            - '../'
+            - '..%2f'
+            - '..%5c'
+    sensitive_paths:
+        request|contains:
+            - '/phpmyadmin'
+            - '/wp-login.php'
+            - '/admin/config'
+    condition: scanner_ua or path_traversal or sensitive_paths
+level: high
+tags:
+    - attack.discovery
+    - attack.t1595
+    - attack.t1190
